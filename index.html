@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101816">
+  <meta name="description" content="آکادمی کونگ‌فو واجارگاه با مربیگری استاد علیرضا پورکاکرودی؛ برنامه کلاس‌ها و درخواست ثبت‌نام.">
+  <title>آکادمی کونگ‌فو واجارگاه | استاد علیرضا پورکاکرودی</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #101816;
+      --surface: #192522;
+      --text: #f5f7f4;
+      --muted: #bac8c0;
+      --gold: #f5c65b;
+      --green: #81c794;
+      --border: rgba(255, 255, 255, .13);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Vazirmatn, Tahoma, sans-serif;
+      line-height: 1.9;
+    }
+    button, input { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+    button:focus-visible, a:focus-visible, input:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+    }
+    .container { width: min(1120px, calc(100% - 36px)); margin-inline: auto; }
+
+    /* سربرگ */
+    .header {
+      position: relative;
+      z-index: 5;
+      background: rgba(16, 24, 22, .95);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 900;
+      font-size: 1.05rem;
+      white-space: nowrap;
+    }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      color: var(--gold);
+      font-weight: 900;
+    }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { color: var(--muted); font-size: .94rem; }
+    .nav-links a:hover { color: var(--gold); }
+    .menu-button {
+      display: none;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 5px 12px;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    /* پس‌زمینه ورزشی */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      min-height: 680px;
+      display: flex;
+      align-items: center;
+      background:
+        radial-gradient(circle at 78% 45%, rgba(245,198,91,.18), transparent 33%),
+        radial-gradient(circle at 8% 80%, rgba(69,150,102,.2), transparent 37%),
+        linear-gradient(130deg, #162720, #101816 62%, #24312b);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: .22;
+      background: repeating-linear-gradient(
+        125deg,
+        transparent 0 70px,
+        rgba(255,255,255,.12) 71px 72px,
+        transparent 73px 145px
+      );
+      transform: skewY(-6deg) scale(1.2);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      bottom: -85px;
+      left: -5%;
+      width: 110%;
+      height: 185px;
+      z-index: -1;
+      border-top: 2px solid rgba(245,198,91,.45);
+      background: linear-gradient(180deg, rgba(245,198,91,.07), transparent);
+      transform: rotate(-4deg);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      align-items: center;
+      gap: 25px;
+      padding-block: 80px 110px;
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .eyebrow {
+      display: inline-block;
+      padding: 5px 15px;
+      color: var(--gold);
+      border: 1px solid rgba(245,198,91,.4);
+      background: rgba(245,198,91,.08);
+      border-radius: 50px;
+      font-size: .88rem;
+      font-weight: 700;
+    }
+    h1 {
+      margin: 20px 0 12px;
+      font-size: clamp(2.35rem, 5vw, 4.6rem);
+      line-height: 1.3;
+      font-weight: 900;
+    }
+    h1 span { color: var(--gold); }
+    .lead { max-width: 570px; color: #d4ddd5; font-size: 1.08rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 9px 22px;
+      border-radius: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .2s, background .2s;
+    }
+    .btn:hover { transform: translateY(-3px); }
+    .btn-primary { background: var(--gold); color: #182018; border: 1px solid var(--gold); }
+    .btn-outline { background: rgba(255,255,255,.04); border: 1px solid var(--border); }
+
+    /* تصویر وکتوری داخلی */
+    .athlete-wrap { position: relative; width: min(100%, 540px); margin-inline: auto; }
+    .athlete-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 13% 9%;
+      border: 2px solid rgba(245,198,91,.28);
+      border-radius: 50%;
+      box-shadow: 0 0 80px rgba(245,198,91,.12), inset 0 0 80px rgba(245,198,91,.08);
+    }
+    .athlete {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 18px 20px rgba(0,0,0,.4));
+      animation: float 5s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* ساعت */
+    .clock-panel {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 18px;
+      margin-top: 24px;
+      padding: 13px 18px;
+      border: 1px solid rgba(245,198,91,.32);
+      border-radius: 14px;
+      background: rgba(12,20,17,.72);
+      backdrop-filter: blur(12px);
+    }
+    .clock-label { color: var(--muted); font-size: .87rem; }
+    #clock { color: var(--gold); font-size: 1.45rem; font-weight: 900; direction: ltr; }
+    #date { font-size: .9rem; }
+
+    section.content-section { padding-block: 80px; }
+    .section-heading { margin: 0 0 12px; font-size: clamp(1.8rem, 3vw, 2.4rem); }
+    .section-intro { margin: 0 0 28px; color: var(--muted); }
+
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card {
+      padding: 25px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 17px;
+    }
+    .card-icon { color: var(--gold); font-size: 1.7rem; }
+    .card h3 { margin: 8px 0; }
+    .card p { margin: 0; color: var(--muted); }
+
+    .schedule {
+      background: linear-gradient(120deg, #182821, #1d3026);
+      border-block: 1px solid var(--border);
+    }
+    .schedule-layout {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 26px;
+    }
+    .schedule-box {
+      padding: 22px 28px;
+      border: 1px solid rgba(245,198,91,.4);
+      border-radius: 16px;
+      background: rgba(16,24,22,.55);
+    }
+    .schedule-box strong { color: var(--gold); font-size: 1.25rem; }
+    .schedule-box p { margin: 4px 0 0; }
+
+    /* طراحی شیک و لوکس شماره تماس */
+    .contact-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+      padding: 30px 35px;
+      background: linear-gradient(135deg, #1b2c25, #121d19);
+      border: 1px solid rgba(245,198,91,.35);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.3);
+      margin-bottom: 40px;
+    }
+    .contact-info-group {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .contact-icon-box {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: rgba(245,198,91,.12);
+      border: 1px solid var(--gold);
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-size: 1.6rem;
+    }
+    .contact-texts span {
+      display: block;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .phone-number {
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 1px;
+      direction: ltr;
+      display: inline-block;
+      margin-top: 2px;
+    }
+    .contact-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-call {
+      background: var(--green);
+      color: #111d16;
+      border: 1px solid var(--green);
+    }
+    .btn-wa {
+      background: #25d366;
+      color: #fff;
+      border: 1px solid #25d366;
+    }
+
+    .registration {
+      max-width: 670px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: var(--surface);
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    label { display: block; margin-bottom: 5px; font-weight: 700; }
+    input {
+      width: 100%;
+      min-height: 45px;
+      padding: 9px 12px;
+      background: #111d18;
+      border: 1px solid #466052;
+      border-radius: 9px;
+      color: var(--text);
+    }
+    .registration button { margin-top: 20px; }
+    .form-note { color: var(--muted); font-size: .9rem; }
+    .feedback {
+      margin-top: 16px;
+      padding: 13px;
+      border-radius: 10px;
+      background: rgba(129,199,148,.1);
+      border: 1px solid rgba(129,199,148,.4);
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .feedback[hidden] { display: none; }
+
+    footer {
+      padding: 27px 0;
+      color: var(--muted);
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 760px) {
+      .menu-button { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        right: 18px;
+        left: 18px;
+        padding: 18px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: #17241e;
+      }
+      .nav-links.open { display: flex; }
+      .hero { min-height: auto; }
+      .hero-grid { grid-template-columns: 1fr; padding-block: 58px 78px; }
+      .athlete-wrap { max-width: 350px; margin-top: -5px; }
+      .cards { grid-template-columns: 1fr; }
+      .schedule-layout { align-items: stretch; flex-direction: column; }
+      .form-grid { grid-template-columns: 1fr; }
+      .contact-banner { flex-direction: column; align-items: stretch; text-align: center; }
+      .contact-info-group { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <nav class="nav container" aria-label="منوی اصلی">
+      <a class="brand" href="#home">
+        <span class="brand-mark" aria-hidden="true">ک</span>
+        آکادمی کونگ‌فو واجارگاه
+      </a>
+      <button class="menu-button" id="menuButton" type="button"
+              aria-label="باز کردن منو" aria-expanded="false"
+              aria-controls="navLinks">☰</button>
+      <div class="nav-links" id="navLinks">
+        <a href="#home">خانه</a>
+        <a href="#about">درباره باشگاه</a>
+        <a href="#schedule">برنامه کلاس‌ها</a>
+        <a href="#register">تماس و ثبت‌نام</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <span class="eyebrow">قدرت • تمرکز • انضباط</span>
+          <h1>مسیر قدرت<br>از <span>اینجا</span> شروع می‌شود</h1>
+          <p class="lead">
+            آکادمی کونگ‌فو واجارگاه، با مربیگری استاد علیرضا پورکاکرودی.
+            برنامه کلاس‌ها و راه‌های ارتباطی زیر در اختیار شماست.
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#register">ثبت‌نام و تماس</a>
+            <a class="btn btn-outline" href="#schedule">برنامه تمرین‌ها</a>
+          </div>
+
+          <div class="clock-panel" role="group" aria-label="تاریخ و ساعت ایران">
+            <span class="clock-label">اکنون به وقت ایران</span>
+            <time id="clock" aria-label="ساعت ایران">--:--:--</time>
+            <span id="date">در حال دریافت تاریخ…</span>
+          </div>
+        </div>
+
+        <div class="athlete-wrap" aria-hidden="true">
+          <svg class="athlete" viewBox="0 0 560 540" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="suit" x1="0" y1="0" x2="1" y2="1">
+                <stop stop-color="#39594a"/>
+                <stop offset="1" stop-color="#111c18"/>
+              </linearGradient>
+              <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+                <stop stop-color="#f5c65b"/>
+                <stop offset="1" stop-color="#d68b30"/>
+              </linearGradient>
+            </defs>
+
+            <circle cx="280" cy="268" r="205" fill="none" stroke="#f5c65b" stroke-opacity=".25" stroke-width="3"/>
+            <path d="M35 205h130M15 237h125M44 273h98M375 150h145M414 183h120" stroke="#f5c65b" stroke-opacity=".55" stroke-width="7" stroke-linecap="round"/>
+            <path d="M75 380h116M39 408h137M397 378h125" stroke="#81c794" stroke-opacity=".48" stroke-width="5" stroke-linecap="round"/>
+
+            <circle cx="306" cy="152" r="37" fill="#c28c67"/>
+            <path d="M270 148q5-46 44-41 29 4 31 31-25-13-49-9l-26 19z" fill="#111715"/>
+
+            <path d="M294 310l-32 84-11 77 32 5 20-69 43-68z" fill="url(#suit)" stroke="#81a58e" stroke-width="4"/>
+            <path d="M249 465l39 3 18 18q4 10-9 12h-62q-14-4-5-15z" fill="#101816" stroke="#f5c65b" stroke-width="4"/>
+
+            <path d="M329 301l80-21 78-43 14 30-76 66-92 22-31-22z" fill="url(#suit)" stroke="#81a58e" stroke-width="4"/>
+            <path d="M480 230l31-8 22 13q9 9 0 17l-31 22-16-30z" fill="#101816" stroke="#f5c65b" stroke-width="4"/>
+
+            <path d="M275 190q39-27 70 3l26 48-25 87-69 5-30-72z" fill="url(#suit)" stroke="#81a58e" stroke-width="4"/>
+            <path d="M266 294q42 16 91-1l-5 17q-39 16-82 2z" fill="url(#accent)"/>
+            <path d="M337 306l18 48-11 8-29-49z" fill="#e4aa42"/>
+
+            <path d="M279 202l-43 36-58-17-9 30 70 27 61-35z" fill="url(#suit)" stroke="#81a58e" stroke-width="4"/>
+            <circle cx="166" cy="233" r="20" fill="#c28c67"/>
+            <path d="M337 198l40 37 44-50 22 21-57 80-65-48z" fill="url(#suit)" stroke="#81a58e" stroke-width="4"/>
+            <circle cx="445" cy="192" r="19" fill="#c28c67"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="about">
+      <div class="container">
+        <h2 class="section-heading">تمرین با هدف، پیشرفت با استمرار</h2>
+        <p class="section-intro">فضای باشگاه برای تمرکز بر مهارت، آمادگی جسمانی و نظم در تمرین طراحی شده است.</p>
+        <div class="cards">
+          <article class="card">
+            <span class="card-icon" aria-hidden="true">◆</span>
+            <h3>آمادگی جسمانی</h3>
+            <p>تمرین منظم برای تقویت توان، هماهنگی و کنترل بدن.</p>
+          </article>
+          <article class="card">
+            <span class="card-icon" aria-hidden="true">✦</span>
+            <h3>تمرکز و انضباط</h3>
+            <p>یادگیری گام‌به‌گام همراه با توجه به دقت و استمرار.</p>
+          </article>
+          <article class="card">
+            <span class="card-icon" aria-hidden="true">◈</span>
+            <h3>مربیگری</h3>
+            <p>تمرین زیر نظر استاد علیرضا پورکاکرودی در واجارگاه.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section schedule" id="schedule">
+      <div class="container schedule-layout">
+        <div>
+          <h2 class="section-heading">برنامه کلاس‌ها</h2>
+          <p class="section-intro">آکادمی کونگ‌فو واجارگاه، استان گیلان</p>
+        </div>
+        <div class="schedule-box">
+          <strong>یکشنبه، سه‌شنبه و پنجشنبه</strong>
+          <p>ساعت ۱۹:۰۰ تا ۲۰:۳۰</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="register">
+      <div class="container">
+        <h2 class="section-heading">ارتباط با آکادمی و ثبت‌نام</h2>
+        <p class="section-intro">برای هماهنگی کلاس‌ها یا ثبت‌نام مستقیم با شماره زیر تماس بگیرید.</p>
+
+        <!-- کادر ویژه شماره تماس -->
+        <div class="contact-banner">
+          <div class="contact-info-group">
+            <div class="contact-icon-box" aria-hidden="true">📞</div>
+            <div class="contact-texts">
+              <span>مدیریت و ثبت‌نام (استاد پورکاکرودی)</span>
+              <a href="tel:09112402990" class="phone-number">0911 240 2990</a>
+            </div>
+          </div>
+          <div class="contact-buttons">
+            <a href="tel:09112402990" class="btn btn-call">تماس تلفنی</a>
+            <a href="https://wa.me/989112402990" target="_blank" rel="noopener noreferrer" class="btn btn-wa">واتساپ</a>
+          </div>
+        </div>
+
+        <form class="registration" id="registrationForm">
+          <h3 style="margin-top:0; margin-bottom:15px; font-size:1.2rem;">یا درخواست خود را آنلاین بفرستید:</h3>
+          <div class="form-grid">
+            <div>
+              <label for="fullName">نام و نام خانوادگی</label>
+              <input id="fullName" name="fullName" type="text" autocomplete="name" maxlength="80" required>
+            </div>
+            <div>
+              <label for="mobile">شماره موبایل شما</label>
+              <input id="mobile" name="mobile" type="tel" inputmode="tel" autocomplete="tel" placeholder="مثلاً ۰۹۱۲۱۲۳۴۵۶۷" required>
+            </div>
+          </div>
+          <button class="btn btn-primary" type="submit">ارسال درخواست به واتساپ باشگاه</button>
+          <div id="feedback" class="feedback" role="status" hidden></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">آکادمی کونگ‌فو واجارگاه · استاد علیرضا پورکاکرودی</div>
+  </footer>
+
+  <script>
+    // شماره واتساپ باشگاه با کد کشور تنظیم شد
+    const WHATSAPP_NUMBER = "989112402990";
+
+    const clockElement = document.getElementById("clock");
+    const dateElement = document.getElementById("date");
+
+    const timeFormatter = new Intl.DateTimeFormat("fa-IR", {
+      timeZone: "Asia/Tehran",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23"
+    });
+
+    const dateFormatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
+      timeZone: "Asia/Tehran",
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+
+    function updateClock() {
+      const now = new Date();
+      clockElement.textContent = timeFormatter.format(now);
+      dateElement.textContent = dateFormatter.format(now);
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    const menuButton = document.getElementById("menuButton");
+    const navLinks = document.getElementById("navLinks");
+
+    menuButton.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      menuButton.setAttribute("aria-expanded", String(isOpen));
+      menuButton.setAttribute("aria-label", isOpen ? "بستن منو" : "باز کردن منو");
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.setAttribute("aria-label", "باز کردن منو");
+      });
+    });
+
+    function toEnglishDigits(value) {
+      return value
+        .replace(/[۰-۹]/g, digit => "۰۱۲۳۴۵۶۷۸۹".indexOf(digit))
+        .replace(/[٠-٩]/g, digit => "٠١٢٣٤٥٦٧٨٩".indexOf(digit));
+    }
+
+    document.getElementById("registrationForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const name = document.getElementById("fullName").value.trim();
+      const mobile = toEnglishDigits(document.getElementById("mobile").value).replace(/[\s()-]/g, "");
+      const feedback = document.getElementById("feedback");
+
+      if (!name || !/^09\d{9}$/.test(mobile)) {
+        feedback.hidden = false;
+        feedback.textContent = "لطفاً نام و شماره موبایل معتبرِ ۱۱ رقمی وارد کنید.";
+        return;
+      }
+
+      const message = `سلام، برای ثبت‌نام در آکادمی کونگ‌فو واجارگاه درخواست دارم.\nنام: ${name}\nشماره تماس: ${mobile}`;
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+      window.open(url, "_blank", "noopener,noreferrer");
+      feedback.hidden = false;
+      feedback.textContent = "واتساپ باشگاه باز شد. می‌توانید پیام خود را مستقیماً ارسال کنید.";
+    });
+  </script>
+</body>
+</html>
