@@ -50,6 +50,90 @@
     @media(max-width:760px){.nav{justify-content:center;gap:8px}.brand{font-size:.95rem}.header-call{padding:7px 11px;font-size:.8rem;gap:7px}}
     @media(max-width:390px){.header-call{width:100%;white-space:normal}.header-call span{font-size:.82rem}.header-call strong{font-size:.95rem}}
     @media(max-width:420px){.hero h1{font-size:2rem}.btn{padding:9px 13px;font-size:.9rem}.practice-shot{align-items:flex-start}}
+
+    /* Refined responsive presentation: spacious desktop, balanced mobile */
+    :root{--bg:#101914;--panel:#1a2720;--gold:#e1bd6d;--cream:#f5f2e9;--muted:#bdc6bc;--green:#2b4232}
+    body{font-size:16px;line-height:1.85;background:var(--bg)}
+    .wrap{width:min(1200px,calc(100% - 48px))}
+    header{position:absolute;inset:0 0 auto;padding:22px 0;background:linear-gradient(180deg,#0b120ed9,transparent);}
+    .nav{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:26px;flex-wrap:nowrap}
+    .brand{font-size:1.03rem;white-space:nowrap;letter-spacing:-.02em}
+    .links{display:flex;justify-content:center;align-items:center;gap:clamp(12px,1.8vw,25px);flex-wrap:nowrap;white-space:nowrap;font-size:.88rem}
+    .links a{transition:color .2s}
+    .header-call{padding:9px 15px;gap:9px;font-size:.82rem;border-radius:10px}
+    .hero{min-height:760px;background:radial-gradient(ellipse at 74% 43%,#354d39 0%,#1d3024 37%,#101914 77%)}
+    .hero-grid{grid-template-columns:minmax(0,1.15fr) minmax(330px,.85fr);gap:clamp(54px,8vw,120px);padding-top:145px;padding-bottom:74px}
+    .hero-copy{max-width:660px}.eyebrow{font-size:.9rem;letter-spacing:.02em}
+    .hero h1{font-size:clamp(3rem,5.2vw,4.65rem);line-height:1.38;letter-spacing:-.035em;margin:16px 0 20px}
+    .hero p{font-size:1.1rem;line-height:2;max-width:630px;color:#d5ddd4;margin-bottom:30px}
+    .actions{gap:12px}.btn{border-radius:9px;padding:12px 21px;transition:filter .18s,transform .18s}
+    .btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+    .portrait{max-width:390px;justify-self:center}
+    .portrait img{width:100%;height:440px;max-height:440px;object-fit:cover;border-radius:20px;box-shadow:0 28px 70px #0009;}
+    section{padding:88px 0}.section-head{max-width:760px;margin-bottom:42px}
+    .section-head h2,.about h2{font-size:clamp(1.8rem,2.6vw,2.25rem);letter-spacing:-.025em}
+    .section-head p{font-size:1rem}
+    .cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+    .card{padding:28px;border-radius:16px;min-height:210px;transition:transform .2s,border-color .2s}
+    .card:hover{transform:translateY(-4px);border-color:#d6b15e55}
+    .about-grid{grid-template-columns:1.05fr .95fr;gap:clamp(40px,7vw,90px)}
+    .callout{padding:34px;border-radius:18px}
+    .feature-section{background:#121c16}.feature-section.alt{background:#151f19}
+    .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}
+    .feature-panel{padding:30px;border-radius:16px;box-shadow:0 12px 32px #0002}
+    .feature-panel h3{font-size:1.17rem}
+    .contact-box{max-width:900px;padding:44px;border:1px solid #ffffff12;box-shadow:0 20px 55px #0003}
+    .platforms{justify-content:flex-start;gap:12px}
+    .platform-link{padding:12px 18px;border-radius:12px;min-width:130px;justify-content:center}
+    .news-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .news-item{padding:16px 18px;border-radius:12px}
+    .fighter-table th,.fighter-table td{padding:13px 12px}
+    footer{padding:30px 0}
+    a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+    @media(max-width:1050px){
+      .wrap{width:min(100% - 40px,960px)}
+      .nav{grid-template-columns:1fr auto;gap:10px 18px}
+      .links{grid-column:1/-1;grid-row:2;justify-content:center;order:0;gap:20px}
+      .brand{grid-column:1;grid-row:1}.header-call{grid-column:2;grid-row:1}
+      .hero{min-height:700px}.hero-grid{gap:50px;grid-template-columns:minmax(0,1fr) minmax(280px,.78fr);padding-top:165px}
+      .hero h1{font-size:clamp(2.8rem,5.4vw,4rem)}
+      .portrait img{height:390px;max-height:390px}
+    }
+    @media(max-width:760px){
+      .wrap{width:calc(100% - 36px)}
+      header{padding:12px 0;background:linear-gradient(180deg,#0b120ef2,#0b120ec9 88%,transparent)}
+      .nav{display:flex;justify-content:space-between;align-items:center;gap:8px 12px}
+      .brand{font-size:.92rem;white-space:normal;line-height:1.45;max-width:45%}
+      .header-call{width:auto;padding:7px 10px;font-size:.76rem;gap:7px;white-space:nowrap}
+      .header-call strong{font-size:.9rem}
+      .links{display:flex;order:3;width:100%;justify-content:flex-start;gap:20px;overflow-x:auto;padding:5px 1px 10px;font-size:.82rem;scrollbar-width:none}
+      .links::-webkit-scrollbar{display:none}.links a{flex:none}
+      .hero{min-height:auto}
+      .hero-grid{grid-template-columns:1fr;gap:30px;padding-top:158px;padding-bottom:58px}
+      .hero-copy{text-align:center;margin:auto}.hero h1{font-size:clamp(2.25rem,8vw,3.2rem);line-height:1.45;margin:10px 0 14px}
+      .hero p{font-size:.98rem;line-height:1.95;margin:0 auto 22px;max-width:620px}
+      .actions{justify-content:center;gap:9px}.btn{padding:10px 15px;font-size:.92rem}
+      .portrait{max-width:280px}.portrait img{width:280px;height:330px;max-height:330px;border-radius:17px}
+      section{padding:58px 0}.section-head{margin-bottom:28px}.section-head h2,.about h2{font-size:1.7rem}
+      .cards{grid-template-columns:1fr;gap:13px}.card{min-height:0;padding:20px}
+      .about-grid{grid-template-columns:1fr;gap:24px}.callout{padding:23px}
+      .feature-grid{grid-template-columns:1fr;gap:16px}.feature-panel{padding:21px}
+      .news-list{grid-template-columns:1fr}
+      .contact-box{padding:24px 18px}.platforms{justify-content:center}
+      .practice-shot{align-items:center}
+    }
+    @media(max-width:430px){
+      .wrap{width:calc(100% - 28px)}
+      .brand{font-size:.84rem;max-width:40%}
+      .header-call{width:auto;padding:7px 8px;font-size:.7rem;gap:5px}.header-call strong{font-size:.82rem}
+      .hero-grid{padding-top:150px}.hero h1{font-size:2.15rem}.hero p{font-size:.94rem}
+      .actions .btn{padding:9px 11px;font-size:.84rem}
+      .platform-link{min-width:0;flex:1;padding:10px 12px}
+      .form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+      .news-top{align-items:flex-start;flex-wrap:wrap}
+    }
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
+
   </style>
 </head>
 <body>
@@ -60,14 +144,14 @@
     <section class="about" id="about"><div class="wrap about-grid"><div><span class="eyebrow">مربی و راهنمای شما</span><h2>استاد علیرضا پورکاکرودی</h2><p class="muted">آکادمی کونگ‌فو واجارگاه فضایی برای یادگیری اصولی هنرهای رزمی و رشد فردی است. هنرجویان در مسیر تمرین، با راهنمایی مربی و توجه به سطح و هدف خود پیش می‌روند.</p><ul class="checks"><li>محیط آموزشی منظم و حمایت‌گر</li><li>توجه به اصول ایمنی و اجرای صحیح حرکات</li><li>مسیر پیشرفت متناسب با سطح هنرجو</li></ul></div><div class="callout"><h3>هر تمرین، یک قدم رو به جلو</h3><p>چه به‌تازگی به ورزش‌های رزمی علاقه‌مند شده باشید و چه بخواهید مهارت‌های خود را ارتقا دهید، نقطه شروع با یک گفت‌وگو و آشنایی با برنامه تمرین است.</p><a class="btn primary" href="#contact">با ما در ارتباط باشید</a><figure class="practice-shot"><img src="۲۰۲۲۱۱۱۷_۲۰۲۲۴۹.webp" alt="استاد در حال نمایش تمرین انعطاف‌پذیری در سالن آکادمی" loading="lazy" draggable="false"><figcaption>تمرین و آمادگی جسمانی در آکادمی</figcaption></figure></div></div></section>
 
     <section id="news" class="feature-section"><div class="wrap"><div class="section-head"><span class="eyebrow">از دنیای ورزش</span><h2>اخبار سایت ورزشی ایران و جهان</h2><p>تازه‌ترین تیترهای ورزش ایران و جهان؛ برای جزئیات هر خبر به منبع خبری مراجعه کنید.</p></div><div class="feature-panel"><div class="news-top"><div><strong>خبرخوان ورزشی</strong><div class="hint">در صورت دسترسی به اینترنت، تیترها از خبرخوان RSS دریافت می‌شوند.</div></div><button type="button" class="small-btn" id="refresh-news">به‌روزرسانی خبرها</button></div><p class="status" id="news-status" aria-live="polite">در حال آماده‌سازی خبرها…</p><div class="news-list" id="news-list" aria-live="polite"></div><p class="hint">منابع و جست‌وجوی بیشتر: <a class="gold" href="https://news.google.com/search?q=%D9%88%D8%B1%D8%B2%D8%B4%20%D8%A7%DB%8C%D8%B1%D8%A7%D9%86&hl=fa&gl=IR&ceid=IR%3Afa" target="_blank" rel="noopener">ورزش ایران</a> · <a class="gold" href="https://news.google.com/search?q=international%20sports&hl=en-US&gl=US&ceid=US%3Aen" target="_blank" rel="noopener">ورزش جهان</a></p></div></div></section>
-    <section id="registration" class="feature-section alt"><div class="wrap"><div class="section-head"><span class="eyebrow">شروع تمرین</span><h2>ثبت‌نام رزمجو</h2><p>فرم را تکمیل کنید تا اطلاعات هنرجو روی همین دستگاه ذخیره شود و مربی بتواند فهرست را مدیریت کند.</p></div><div class="feature-grid"><div class="feature-panel"><h3>فرم ثبت‌نام هنرجو</h3><form id="fighter-form"><div class="form-grid"><div class="field"><label for="fighter-name">نام و نام خانوادگی *</label><input id="fighter-name" name="name" autocomplete="name" required maxlength="80" placeholder="مثلاً علی رضایی"></div><div class="field"><label for="fighter-phone">شماره تماس *</label><input id="fighter-phone" name="phone" type="tel" autocomplete="tel" required maxlength="25" placeholder="09…"></div><div class="field"><label for="fighter-age">سن</label><input id="fighter-age" name="age" type="number" min="4" max="100" inputmode="numeric" placeholder="سن هنرجو"></div><div class="field"><label for="fighter-level">سابقهٔ تمرین</label><select id="fighter-level" name="level"><option value="تازه‌کار">تازه‌کار</option><option value="کمتر از یک سال">کمتر از یک سال</option><option value="یک تا سه سال">یک تا سه سال</option><option value="بیش از سه سال">بیش از سه سال</option></select></div><div class="field full"><label for="fighter-note">توضیحات (اختیاری)</label><textarea id="fighter-note" name="note" rows="3" maxlength="300" placeholder="هدف یا نکته‌ای که مربی باید بداند"></textarea></div></div><div class="form-actions"><button class="btn primary" type="submit">ثبت اطلاعات هنرجو</button><span class="status" id="form-status" aria-live="polite"></span></div></form><p class="privacy-note">اطلاعات این فرم فقط در حافظهٔ محلی مرورگر همین دستگاه ذخیره می‌شود؛ به مربی یا پیام‌رسان‌ها ارسال نمی‌شود. برای استفادهٔ مشترک، ثبت‌نام‌ها را به‌صورت جداگانه به مربی منتقل کنید.</p></div><div class="feature-panel"><h3>پیام به استاد در پیام‌رسان دلخواه</h3><p>یکی از گزینه‌ها را لمس کنید تا پیام‌رسان رسمی باز شود و شمارهٔ استاد برای شروع گفت‌وگو کپی شود.</p><div class="platforms messenger-actions" aria-label="انتخاب پیام‌رسان"><a class="platform-link eitaa" href="https://eitaa.com" target="_blank" rel="noopener noreferrer" data-messenger="ایتا" aria-label="باز کردن ایتا؛ شمارهٔ استاد 09112402990 را جست‌وجو کنید"><span class="messenger-icon" aria-hidden="true">e</span><span>پیام در ایتا</span></a><a class="platform-link bale" href="https://ble.ir" target="_blank" rel="noopener noreferrer" data-messenger="بله" aria-label="باز کردن بله؛ شمارهٔ استاد 09112402990 را جست‌وجو کنید"><span class="messenger-icon" aria-hidden="true">b</span><span>پیام در بله</span></a><a class="platform-link rubika" href="https://rubika.ir" target="_blank" rel="noopener noreferrer" data-messenger="روبیکا" aria-label="باز کردن روبیکا؛ شمارهٔ استاد 09112402990 را جست‌وجو کنید"><span class="messenger-icon" aria-hidden="true">r</span><span>پیام در روبیکا</span></a></div><p class="messenger-note" id="messenger-status" aria-live="polite">برای گفت‌وگوی مستقیم، شمارهٔ ۰۹۱۱۲۴۰۲۹۹۰ را در مخاطبان پیام‌رسان جست‌وجو کنید. (پیوند مستقیمِ حساب استاد در پیام‌رسان‌ها ارائه نشده است.)</p><hr style="border:0;border-top:1px solid #ffffff20;margin:22px 0"><h3>لیست ثبت‌نام‌کنندگان</h3><div class="list-tools"><button type="button" class="small-btn" id="show-fighters" aria-expanded="false" aria-controls="fighter-list-wrap">نمایش (Show)</button><span class="count" id="fighter-count">۰ ثبت‌نام</span></div><div id="fighter-list-wrap" hidden><div id="fighter-list"></div></div><p class="hint">دکمهٔ نمایش فهرست را باز می‌کند؛ حذف هر رزمجو از حافظهٔ همین مرورگر انجام می‌شود.</p></div></div></div></section>
-    <section id="contact" class="contact"><div class="wrap"><div class="section-head"><span class="eyebrow">شروع مسیر شما</span><h2>برای اطلاعات بیشتر تماس بگیرید</h2><p>برای آگاهی از زمان‌بندی کلاس‌ها، شرایط حضور و جزئیات ثبت‌نام، با آکادمی در ارتباط باشید.</p></div><div class="contact-box"><p>آکادمی کونگ‌فو واجارگاه</p><p class="muted">استاد علیرضا پورکاکرودی</p><p class="contact-number">شمارهٔ استاد: <span dir="ltr">09112402990</span></p><a class="btn call-btn contact-call" href="tel:09112402990" aria-label="تماس با استاد علیرضا پورکاکرودی با شماره 09112402990">تماس: ۰۹۱۱۲۴۰۲۹۹۰</a><h3 style="margin:24px 0 8px;color:var(--gold)">ارسال پیام به استاد</h3><div class="platforms messenger-actions" aria-label="انتخاب پیام‌رسان"><a class="platform-link eitaa" href="https://eitaa.com" target="_blank" rel="noopener noreferrer" data-messenger="ایتا" aria-label="باز کردن ایتا؛ شمارهٔ استاد 09112402990 را جست‌وجو کنید"><span class="messenger-icon" aria-hidden="true">e</span><span>ایتا</span></a><a class="platform-link bale" href="https://ble.ir" target="_blank" rel="noopener noreferrer" data-messenger="بله" aria-label="باز کردن بله؛ شمارهٔ استاد 09112402990 را جست‌وجو کنید"><span class="messenger-icon" aria-hidden="true">b</span><span>بله</span></a><a class="platform-link rubika" href="https://rubika.ir" target="_blank" rel="noopener noreferrer" data-messenger="روبیکا" aria-label="باز کردن روبیکا؛ شمارهٔ استاد 09112402990 را جست‌وجو کنید"><span class="messenger-icon" aria-hidden="true">r</span><span>روبیکا</span></a></div><p class="messenger-note" id="contact-messenger-status" aria-live="polite">شماره را در پیام‌رسان انتخابی جست‌وجو کنید؛ برای بازشدن گفت‌وگوی مستقیم، نام کاربری رسمی استاد لازم است.</p><a class="direct-wa" href="https://wa.me/989112402990" target="_blank" rel="noopener noreferrer" aria-label="گفت‌وگوی مستقیم واتساپ با شماره استاد">گفت‌وگوی مستقیم در واتساپ</a></div></div></section>
+    <section id="registration" class="feature-section alt"><div class="wrap"><div class="section-head"><span class="eyebrow">شروع تمرین</span><h2>ثبت‌نام رزمجو</h2><p>فرم را تکمیل کنید تا اطلاعات هنرجو روی همین دستگاه ذخیره شود و مربی بتواند فهرست را مدیریت کند.</p></div><div class="feature-grid"><div class="feature-panel"><h3>فرم ثبت‌نام هنرجو</h3><form id="fighter-form"><div class="form-grid"><div class="field"><label for="fighter-name">نام و نام خانوادگی *</label><input id="fighter-name" name="name" autocomplete="name" required maxlength="80" placeholder="مثلاً علی رضایی"></div><div class="field"><label for="fighter-phone">شماره تماس *</label><input id="fighter-phone" name="phone" type="tel" autocomplete="tel" required maxlength="25" placeholder="09…"></div><div class="field"><label for="fighter-age">سن</label><input id="fighter-age" name="age" type="number" min="4" max="100" inputmode="numeric" placeholder="سن هنرجو"></div><div class="field"><label for="fighter-level">سابقهٔ تمرین</label><select id="fighter-level" name="level"><option value="تازه‌کار">تازه‌کار</option><option value="کمتر از یک سال">کمتر از یک سال</option><option value="یک تا سه سال">یک تا سه سال</option><option value="بیش از سه سال">بیش از سه سال</option></select></div><div class="field full"><label for="fighter-note">توضیحات (اختیاری)</label><textarea id="fighter-note" name="note" rows="3" maxlength="300" placeholder="هدف یا نکته‌ای که مربی باید بداند"></textarea></div></div><div class="form-actions"><button class="btn primary" type="submit">ثبت اطلاعات هنرجو</button><span class="status" id="form-status" aria-live="polite"></span></div></form><p class="privacy-note">اطلاعات این فرم فقط در حافظهٔ محلی مرورگر همین دستگاه ذخیره می‌شود؛ به مربی یا پیام‌رسان‌ها ارسال نمی‌شود. برای استفادهٔ مشترک، ثبت‌نام‌ها را به‌صورت جداگانه به مربی منتقل کنید.</p></div><div class="feature-panel"><h3>پیام به استاد در پیام‌رسان دلخواه</h3><p>گزینهٔ پیام‌رسان را انتخاب کنید تا صفحهٔ مستقیم استاد با شمارهٔ ۰۹۱۱۲۴۰۲۹۹۰ باز شود؛ امکان گفت‌وگو به فعال‌بودن حساب و تنظیمات هر پیام‌رسان بستگی دارد.</p><div class="platforms messenger-actions" aria-label="انتخاب پیام‌رسان"><a class="platform-link eitaa" href="https://eitaa.com/09112402990" target="_blank" rel="noopener noreferrer" data-messenger="ایتا" aria-label="باز کردن صفحهٔ گفت‌وگوی استاد در ایتا با شمارهٔ 09112402990"><span class="messenger-icon" aria-hidden="true">e</span><span>پیام در ایتا</span></a><a class="platform-link bale" href="https://ble.ir/09112402990" target="_blank" rel="noopener noreferrer" data-messenger="بله" aria-label="باز کردن صفحهٔ گفت‌وگوی استاد در بله با شمارهٔ 09112402990"><span class="messenger-icon" aria-hidden="true">b</span><span>پیام در بله</span></a><a class="platform-link rubika" href="https://rubika.ir/09112402990" target="_blank" rel="noopener noreferrer" data-messenger="روبیکا" aria-label="باز کردن صفحهٔ گفت‌وگوی استاد در روبیکا با شمارهٔ 09112402990"><span class="messenger-icon" aria-hidden="true">r</span><span>پیام در روبیکا</span></a></div><p class="messenger-note" id="messenger-status" aria-live="polite">برای گفت‌وگوی مستقیم، شمارهٔ ۰۹۱۱۲۴۰۲۹۹۰ را در مخاطبان پیام‌رسان جست‌وجو کنید. (پیوند مستقیمِ حساب استاد در پیام‌رسان‌ها ارائه نشده است.)</p><hr style="border:0;border-top:1px solid #ffffff20;margin:22px 0"><h3>لیست ثبت‌نام‌کنندگان</h3><div class="list-tools"><button type="button" class="small-btn" id="show-fighters" aria-expanded="false" aria-controls="fighter-list-wrap">نمایش (Show)</button><span class="count" id="fighter-count">۰ ثبت‌نام</span></div><div id="fighter-list-wrap" hidden><div id="fighter-list"></div></div><p class="hint">دکمهٔ نمایش فهرست را باز می‌کند؛ حذف هر رزمجو از حافظهٔ همین مرورگر انجام می‌شود.</p></div></div></div></section>
+    <section id="contact" class="contact"><div class="wrap"><div class="section-head"><span class="eyebrow">شروع مسیر شما</span><h2>برای اطلاعات بیشتر تماس بگیرید</h2><p>برای آگاهی از زمان‌بندی کلاس‌ها، شرایط حضور و جزئیات ثبت‌نام، با آکادمی در ارتباط باشید.</p></div><div class="contact-box"><p>آکادمی کونگ‌فو واجارگاه</p><p class="muted">استاد علیرضا پورکاکرودی</p><p class="contact-number">شمارهٔ استاد: <span dir="ltr">09112402990</span></p><a class="btn call-btn contact-call" href="tel:09112402990" aria-label="تماس با استاد علیرضا پورکاکرودی با شماره 09112402990">تماس: ۰۹۱۱۲۴۰۲۹۹۰</a><h3 style="margin:24px 0 8px;color:var(--gold)">ارسال پیام به استاد</h3><div class="platforms messenger-actions" aria-label="انتخاب پیام‌رسان"><a class="platform-link eitaa" href="https://eitaa.com/09112402990" target="_blank" rel="noopener noreferrer" data-messenger="ایتا" aria-label="باز کردن صفحهٔ گفت‌وگوی استاد در ایتا با شمارهٔ 09112402990"><span class="messenger-icon" aria-hidden="true">e</span><span>ایتا</span></a><a class="platform-link bale" href="https://ble.ir/09112402990" target="_blank" rel="noopener noreferrer" data-messenger="بله" aria-label="باز کردن صفحهٔ گفت‌وگوی استاد در بله با شمارهٔ 09112402990"><span class="messenger-icon" aria-hidden="true">b</span><span>بله</span></a><a class="platform-link rubika" href="https://rubika.ir/09112402990" target="_blank" rel="noopener noreferrer" data-messenger="روبیکا" aria-label="باز کردن صفحهٔ گفت‌وگوی استاد در روبیکا با شمارهٔ 09112402990"><span class="messenger-icon" aria-hidden="true">r</span><span>روبیکا</span></a></div><p class="messenger-note" id="contact-messenger-status" aria-live="polite">پیوند هر پیام‌رسان مستقیماً به صفحهٔ شمارهٔ استاد می‌رود؛ اگر حساب در آن پیام‌رسان فعال باشد، گفت‌وگو را از همان‌جا آغاز کنید.</p><a class="direct-wa" href="https://wa.me/989112402990" target="_blank" rel="noopener noreferrer" aria-label="گفت‌وگوی مستقیم واتساپ با شماره استاد">گفت‌وگوی مستقیم در واتساپ</a></div></div></section>
   </main>
   <footer><div class="wrap">© آکادمی کونگ‌فو واجارگاه | استاد علیرضا پورکاکرودی</div></footer>
 
 <script>
 (()=>{
-  document.querySelectorAll('.platform-link[data-messenger]').forEach(link=>link.addEventListener('click',()=>{const status=document.getElementById(link.closest('#contact')?'contact-messenger-status':'messenger-status');if(status)status.textContent='شمارهٔ استاد 09112402990 برای شروع گفت‌وگو با '+link.dataset.messenger+' آماده است؛ در پیام‌رسان آن را جست‌وجو کنید.';if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText('09112402990').catch(()=>{});}));
+  document.querySelectorAll('.platform-link[data-messenger]').forEach(link=>link.addEventListener('click',()=>{const status=document.getElementById(link.closest('#contact')?'contact-messenger-status':'messenger-status');if(status)status.textContent='در حال بازکردن صفحهٔ مستقیم استاد در '+link.dataset.messenger+'؛ در صورت فعال‌بودن حساب می‌توانید پیام بفرستید.';}));
   const STORAGE_KEY='vajargahKungFuFighters_v1';
   const faNum=n=>new Intl.NumberFormat('fa-IR').format(n);
   const readFighters=()=>{try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');return Array.isArray(x)?x:[]}catch{return []}};
