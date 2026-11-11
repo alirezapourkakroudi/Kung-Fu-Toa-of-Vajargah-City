@@ -187,282 +187,219 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://lspxhmqglcpdsanjifos.supabase.co";
-const SUPABASE_ANON_KEY = "GAPGPTMASKTOKENhdc133118dlX0X";
-let _sb = null;
+(() => {
+  'use strict';
+  const SUPABASE_URL = 'https://lspxhmqglcpdsanjifos.supabase.co';
+  const SUPABASE_ANON_KEY = 'secret-00734a38';
+  const MASTER_PHONE = '09112402990';
+  const STORAGE_KEY = 'vajargahKungFuFighters_v1';
+  const MASTER_KEY = 'vajargahMasterPasswordHash_v1';
+  let supabaseClient = null;
+  try {
+    if (window.supabase && typeof window.supabase.createClient === 'function') {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+  } catch (error) { console.warn('Supabase is unavailable; local mode will be used.', error); }
 
-try {
-  if (window.supabase) {
-    _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-} catch (error) {
-  console.error('Supabase initialization failed:', error);
-}
-
-const MASTER_PHONE = "09112402990";
-
-(()=>{
-  // پشتیبانی از لینک‌های پیام‌رسان
-  document.querySelectorAll('.platform-link[data-messenger]').forEach(link => {
-    link.addEventListener('click', () => {
-      console.log('باز کردن پیام‌رسان: ' + link.dataset.messenger);
-    });
-  });
-
+  const byId = id => document.getElementById(id);
+  const form = byId('fighter-form'), formStatus = byId('form-status');
+  const listBox = byId('fighter-list'), count = byId('fighter-count');
+  const masterWrap = byId('master-list-wrap'), masterLogin = byId('master-login');
+  const masterLock = byId('master-lock'), masterStatus = byId('master-status');
+  const changePasswordButton = byId('master-change-password');
+  const newsList = byId('news-list'), newsStatus = byId('news-status'), refresh = byId('refresh-news');
   const faNum = n => new Intl.NumberFormat('fa-IR').format(n);
-  const form = document.getElementById('fighter-form');
-  const formStatus = document.getElementById('form-status');
-  const masterLoginBtn = document.getElementById('master-login');
-  const masterChangePwBtn = document.getElementById('master-change-password');
-  const masterLockBtn = document.getElementById('master-lock');
-  const masterListWrap = document.getElementById('master-list-wrap');
-  const masterStatus = document.getElementById('master-status');
-  const countSpan = document.getElementById('fighter-count');
-  const listContainer = document.getElementById('fighter-list');
-
+  const readFighters = () => {
+    try { const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); return Array.isArray(saved) ? saved : []; }
+    catch (error) { console.warn('Could not read saved fighters.', error); return []; }
+  };
+  const writeFighters = people => localStorage.setItem(STORAGE_KEY, JSON.stringify(people));
+  const digest = async value => {
+    if (!window.crypto || !window.crypto.subtle || !window.TextEncoder) throw new Error('Secure hashing is unavailable.');
+    const bytes = new TextEncoder().encode(value);
+    const hash = await window.crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, '0')).join('');
+  };
   let masterUnlocked = false;
 
-  // ۱. دریافت هنرجویان از پایگاه داده Supabase
-  async function readFighters() {
-    if (!_sb) return [];
-    try {
-      const { data, error } = await _sb
-        .from('fighters')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('خطا در دریافت اطلاعات از Supabase:', error);
-        return [];
-      }
-      return data || [];
-    } catch (e) {
-      console.error(e);
-      return [];
+  function drawFighters() {
+    if (!masterUnlocked || !listBox || !count) return;
+    const people = readFighters();
+    count.textContent = faNum(people.length) + ' ثبت‌نام';
+    listBox.replaceChildren();
+    if (!people.length) {
+      const empty = document.createElement('div'); empty.className = 'empty-state';
+      empty.textContent = 'هنوز ثبت‌نامی ثبت نشده است.'; listBox.append(empty); return;
     }
-  }
-
-  // ۲. نمایش جدول هنرجویان
-  async function drawFighters() {
-    if (!masterUnlocked || !listContainer) return;
-    listContainer.innerHTML = '<p class="status-msg">در حال دریافت فهرست از پایگاه داده...</p>';
-
-    const people = await readFighters();
-    if (countSpan) countSpan.textContent = faNum(people.length) + ' ثبت‌نام';
-
-    if (people.length === 0) {
-      listContainer.innerHTML = '<p class="status-msg">هنوز هیچ ثبت‌نامی در پایگاه داده ثبت نشده است.</p>';
-      return;
-    }
-
-    const table = document.createElement('table');
-    table.id = 'fighter-table';
-    table.className = 'fighter-table';
-    table.innerHTML = `
-      <thead>
-        <tr>
-          <th>نام و نام خانوادگی</th>
-          <th>شماره تماس</th>
-          <th>سن</th>
-          <th>سابقهٔ تمرین</th>
-          <th>تاریخ ثبت‌نام</th>
-          <th>مدیریت</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    `;
-
-    const tbody = table.querySelector('tbody');
-
-    people.forEach(person => {
-      const tr = document.createElement('tr');
-      const regDate = person.created_at ? new Date(person.created_at).toLocaleDateString('fa-IR') : '-';
-
-      tr.innerHTML = `
-        <td>${person.name || ''}</td>
-        <td><a href="tel:${person.phone}">${person.phone || ''}</a></td>
-        <td>${person.age ? faNum(person.age) : '-'}</td>
-        <td>${person.level || '-'}</td>
-        <td>${regDate}</td>
-        <td>
-          <button class="btn btn-secondary btn-sm show-btn">نمایش</button>
-          <button class="btn btn-danger btn-sm del-btn">حذف</button>
-        </td>
-      `;
-
-      // رویداد دکمه نمایش جزئیات
-      tr.querySelector('.show-btn').addEventListener('click', () => {
-        window.alert(
-          `اطلاعات هنرجو:\n` +
-          `نام: ${person.name}\n` +
-          `شماره تماس: ${person.phone}\n` +
-          `سن: ${person.age || '-'}\n` +
-          `سابقه: ${person.level || '-'}\n` +
-          `تاریخ: ${regDate}\n` +
-          `توضیحات: ${person.note || 'ندارد'}`
-        );
-      });
-
-      // رویداد دکمه حذف از دیتابیس Supabase
-      tr.querySelector('.del-btn').addEventListener('click', async () => {
-        if (!confirm(`آیا از حذف هنرجو «${person.name}» مطمئن هستید؟`)) return;
-        
-        const { error } = await _sb.from('fighters').delete().eq('id', person.id);
-        if (error) {
-          alert('خطا در حذف هنرجو از پایگاه داده: ' + error.message);
-        } else {
-          alert('هنرجو با موفقیت حذف شد.');
-          drawFighters();
-        }
-      });
-
-      tbody.appendChild(tr);
+    const wrap = document.createElement('div'); wrap.className = 'table-wrap';
+    const table = document.createElement('table'); table.className = 'fighter-table';
+    table.setAttribute('aria-label', 'فهرست ثبت‌نام هنرجویان');
+    const thead = document.createElement('thead'), headerRow = document.createElement('tr');
+    ['نام و نام خانوادگی', 'شماره تماس', 'سن', 'سابقهٔ تمرین', 'تاریخ ثبت‌نام', 'مدیریت'].forEach(label => {
+      const th = document.createElement('th'); th.scope = 'col'; th.textContent = label; headerRow.append(th);
     });
-
-    listContainer.innerHTML = '';
-    listContainer.appendChild(table);
-  }
-
-  // ۳. ثبت‌نام هنرجو و ارسال مستقیم به Supabase
-  if (form) {
-    form.addEventListener('submit', async event => {
-      event.preventDefault();
-      if (!_sb) {
-        formStatus.textContent = 'خطا در اتصال به پایگاه داده ابری.';
-        return;
-      }
-
-      formStatus.textContent = 'در حال ذخیره‌سازی در پایگاه داده...';
-
-      const formData = new FormData(form);
-      const fighter = {
-        id: (crypto.randomUUID ? crypto.randomUUID() : 'f_' + Date.now()),
-        name: formData.get('name')?.toString().trim(),
-        phone: formData.get('phone')?.toString().trim(),
-        age: parseInt(formData.get('age'), 10) || null,
-        level: formData.get('level')?.toString(),
-        note: formData.get('note')?.toString().trim(),
-        created_at: new Date().toISOString()
-      };
-
-      const { error } = await _sb.from('fighters').insert([fighter]);
-
-      if (error) {
-        console.error('Insert error:', error);
-        formStatus.textContent = 'خطا در ثبت اطلاعات در سرور: ' + error.message;
-      } else {
-        form.reset();
-        formStatus.textContent = 'اطلاعات با موفقیت در پایگاه داده سرور ثبت شد و در تمام دستگاه‌ها در دسترس است.';
-        if (masterUnlocked) await drawFighters();
-      }
+    thead.append(headerRow); table.append(thead);
+    const tbody = document.createElement('tbody');
+    people.map((person, index) => ({person, index})).sort((a, b) => String(b.person.createdAt || '').localeCompare(String(a.person.createdAt || ''))).forEach(({person, index}) => {
+      const row = document.createElement('tr');
+      const registered = person.createdAt ? new Date(person.createdAt) : null;
+      const dateLabel = registered && !Number.isNaN(registered.getTime()) ? registered.toLocaleDateString('fa-IR') : '—';
+      const values = [person.name || '', person.phone || '', person.age || '—', person.level || '—', dateLabel];
+      const labels = ['نام و نام خانوادگی', 'شماره تماس', 'سن', 'سابقهٔ تمرین', 'تاریخ ثبت‌نام'];
+      values.forEach((value, i) => { const td = document.createElement('td'); td.dataset.label = labels[i]; td.textContent = String(value); row.append(td); });
+      const actionCell = document.createElement('td'); actionCell.dataset.label = 'مدیریت';
+      const actions = document.createElement('div'); actions.className = 'row-actions';
+      const show = document.createElement('button'); show.type = 'button'; show.className = 'small-btn'; show.textContent = 'نمایش';
+      show.addEventListener('click', () => window.alert(['نام: ' + (person.name || ''), 'شماره تماس: ' + (person.phone || ''), 'سن: ' + (person.age || '—'), 'سابقه: ' + (person.level || '—'), 'تاریخ ثبت‌نام: ' + dateLabel, 'توضیحات: ' + (person.note || '—')].join('\n')));
+      const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'small-btn'; edit.textContent = 'ویرایش';
+      edit.addEventListener('click', () => {
+        const name = window.prompt('نام و نام خانوادگی:', person.name || ''); if (name === null) return;
+        const phone = window.prompt('شماره تماس:', person.phone || ''); if (phone === null) return;
+        const age = window.prompt('سن:', person.age || ''); if (age === null) return;
+        const level = window.prompt('سابقهٔ تمرین:', person.level || ''); if (level === null) return;
+        const note = window.prompt('توضیحات:', person.note || ''); if (note === null) return;
+        if (!name.trim() || !phone.trim()) { window.alert('نام و شماره تماس نمی‌توانند خالی باشند.'); return; }
+        const updated = readFighters();
+        const current = updated.findIndex(item => item.id === person.id);
+        if (current < 0) return;
+        updated[current] = {...updated[current], name: name.trim(), phone: phone.trim(), age: age.trim(), level: level.trim(), note: note.trim()};
+        try { writeFighters(updated); drawFighters(); } catch (error) { window.alert('ذخیرهٔ تغییرات انجام نشد. فضای ذخیره‌سازی را بررسی کنید.'); }
+      });
+      const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'danger-btn'; remove.textContent = 'حذف';
+      remove.addEventListener('click', () => {
+        if (!window.confirm('ثبت‌نام ' + (person.name || '') + ' حذف شود؟')) return;
+        const updated = readFighters().filter(item => item.id !== person.id);
+        try { writeFighters(updated); drawFighters(); } catch (error) { window.alert('حذف ذخیره نشد. فضای ذخیره‌سازی را بررسی کنید.'); }
+      });
+      actions.append(show, edit, remove); actionCell.append(actions); row.append(actionCell); tbody.append(row);
     });
+    table.append(tbody); wrap.append(table); listBox.append(wrap);
   }
 
-  // ۴. مدیریت ورود و رمز استاد با Supabase
   async function getRemoteAdmin() {
-    if (!_sb) return { data: null, error: new Error('Supabase unavailable') };
-    return await _sb.from('admin_settings').select('password').eq('phone', MASTER_PHONE).single();
+    if (!supabaseClient) return {data: null, error: new Error('Supabase unavailable')};
+    return supabaseClient.from('admin_settings').select('password').eq('phone', MASTER_PHONE).single();
   }
-
   function lockMaster() {
     masterUnlocked = false;
-    if (masterListWrap) masterListWrap.style.display = 'none';
-    if (masterLockBtn) masterLockBtn.style.display = 'none';
-    if (masterChangePwBtn) masterChangePwBtn.style.display = 'none';
-    if (masterLoginBtn) masterLoginBtn.style.display = 'inline-block';
+    if (masterWrap) masterWrap.hidden = true;
+    if (listBox) listBox.replaceChildren();
+    if (count) count.textContent = '';
+    if (masterLogin) masterLogin.textContent = 'ورود / نمایش فهرست';
     if (masterStatus) masterStatus.textContent = 'فهرست قفل شد.';
   }
-
-  if (masterLoginBtn) {
-    masterLoginBtn.addEventListener('click', async () => {
-      const enteredPhone = prompt('شماره همراه استاد را وارد کنید:');
-      if (!enteredPhone || enteredPhone.trim() !== MASTER_PHONE) {
-        alert('شماره همراه وارد شده نامعتبر است.');
-        return;
-      }
-
-      const pass = prompt('رمز عبور مدیریت را وارد کنید:');
-      if (!pass) return;
-
-      const { data: remoteData, error } = await getRemoteAdmin();
-      if (!error && remoteData && remoteData.password === pass) {
-        masterUnlocked = true;
-        if (masterListWrap) masterListWrap.style.display = 'block';
-        if (masterLockBtn) masterLockBtn.style.display = 'inline-block';
-        if (masterChangePwBtn) masterChangePwBtn.style.display = 'inline-block';
-        masterLoginBtn.style.display = 'none';
-        masterStatus.textContent = 'ورود موفق؛ اطلاعات مستقیماً از Supabase بارگذاری شد.';
-        drawFighters();
+  if (masterLogin) masterLogin.addEventListener('click', async () => {
+    try {
+      const phone = window.prompt('شمارهٔ تلفن استاد را وارد کنید:'); if (phone === null) return;
+      if (phone.trim() !== MASTER_PHONE) { masterStatus.textContent = 'شمارهٔ تلفن استاد نادرست است.'; return; }
+      let remoteData = null;
+      if (supabaseClient) { try { const result = await getRemoteAdmin(); if (!result.error && result.data) remoteData = result.data; } catch (error) {} }
+      let password;
+      if (remoteData) {
+        password = window.prompt('رمز ورود استاد:'); if (password === null) return;
+        if (password !== String(remoteData.password)) { masterStatus.textContent = 'رمز نادرست است.'; return; }
       } else {
-        alert('رمز عبور وارد شده نادرست است.');
+        let saved = localStorage.getItem(MASTER_KEY);
+        if (!saved) {
+          const initialPassword = window.prompt('ورود محلی: رمز استاد را تعیین کنید (حداقل ۸ نویسه):'); if (initialPassword === null) return;
+          if (initialPassword.length < 8) { masterStatus.textContent = 'رمز باید دست‌کم ۸ نویسه باشد.'; return; }
+          const confirmPassword = window.prompt('رمز استاد را دوباره وارد کنید:'); if (confirmPassword !== initialPassword) { masterStatus.textContent = 'رمزها یکسان نیستند؛ دوباره تلاش کنید.'; return; }
+          saved = await digest(initialPassword); localStorage.setItem(MASTER_KEY, saved); password = initialPassword;
+        } else {
+          password = window.prompt('رمز ورود استاد:'); if (password === null) return;
+          if (await digest(password) !== saved) { masterStatus.textContent = 'رمز نادرست است.'; return; }
+        }
       }
-    });
-  }
-
-  if (masterLockBtn) {
-    masterLockBtn.addEventListener('click', lockMaster);
-  }
-
-  // تغییر رمز عبور استاد در دیتابیس
-  if (masterChangePwBtn) {
-    masterChangePwBtn.addEventListener('click', async () => {
-      const current = prompt('رمز عبور فعلی را وارد کنید:');
-      if (!current) return;
-
-      const { data: remoteData } = await getRemoteAdmin();
-      if (!remoteData || remoteData.password !== current) {
-        alert('رمز عبور فعلی نادرست است.');
-        return;
-      }
-
-      const newPass = prompt('رمز جدید (حداقل ۸ نویسه):');
-      if (!newPass || newPass.length < 8) {
-        alert('رمز عبور باید حداقل ۸ کاراکتر باشد.');
-        return;
-      }
-
-      const { error } = await _sb.from('admin_settings').update({ password: newPass }).eq('phone', MASTER_PHONE);
-      if (error) {
-        alert('خطا در به‌روزرسانی رمز در سرور: ' + error.message);
+      masterUnlocked = true; masterWrap.hidden = false; masterLogin.textContent = 'فهرست استاد باز است';
+      masterStatus.textContent = remoteData ? 'ورود موفق؛ رمز از Supabase بررسی شد.' : 'ورود موفق؛ رمز محلی این دستگاه بررسی شد.';
+      drawFighters();
+    } catch (error) { masterStatus.textContent = 'بررسی رمز ممکن نشد؛ اتصال یا پشتیبانی رمزنگاری مرورگر را بررسی کنید.'; }
+  });
+  if (changePasswordButton) changePasswordButton.addEventListener('click', async () => {
+    if (!masterUnlocked) return;
+    try {
+      const currentPassword = window.prompt('رمز عبور فعلی:'); if (currentPassword === null) return;
+      let remoteData = null;
+      if (supabaseClient) { try { const result = await getRemoteAdmin(); if (!result.error && result.data) remoteData = result.data; } catch (error) {} }
+      const saved = localStorage.getItem(MASTER_KEY);
+      const valid = remoteData ? currentPassword === String(remoteData.password) : !!saved && await digest(currentPassword) === saved;
+      if (!valid) { masterStatus.textContent = 'رمز فعلی نادرست است یا امکان تأیید آن فراهم نشد.'; return; }
+      const newPassword = window.prompt('رمز عبور جدید (حداقل ۸ نویسه):'); if (newPassword === null) return;
+      if (newPassword.length < 8) { masterStatus.textContent = 'رمز جدید باید دست‌کم ۸ نویسه باشد.'; return; }
+      const repeatPassword = window.prompt('تکرار رمز جدید:'); if (repeatPassword === null) return;
+      if (newPassword !== repeatPassword) { masterStatus.textContent = 'رمزهای جدید یکسان نیستند.'; return; }
+      if (remoteData) {
+        const result = await supabaseClient.from('admin_settings').update({password: newPassword}).eq('phone', MASTER_PHONE);
+        if (result.error) { masterStatus.textContent = 'به‌روزرسانی Supabase ناموفق بود؛ رمز تغییر نکرد.'; return; }
+        localStorage.setItem(MASTER_KEY, await digest(newPassword)); masterStatus.textContent = 'رمز عبور در Supabase به‌روزرسانی شد.';
+        window.alert('رمز عبور در Supabase با موفقیت تغییر کرد.');
       } else {
-        alert('رمز عبور با موفقیت در Supabase تغییر کرد و روی تمام دستگاه‌ها هماهنگ شد.');
+        localStorage.setItem(MASTER_KEY, await digest(newPassword)); masterStatus.textContent = 'رمز محلی این دستگاه تغییر کرد و در دستگاه‌های دیگر همگام نیست.';
+        window.alert('رمز محلی این دستگاه با موفقیت تغییر کرد.');
       }
-    });
-  }
+    } catch (error) { masterStatus.textContent = 'تغییر رمز انجام نشد؛ اتصال یا پشتیبانی رمزنگاری مرورگر را بررسی کنید.'; }
+  });
+  if (masterLock) masterLock.addEventListener('click', lockMaster);
+  window.addEventListener('storage', event => { if (event.key === STORAGE_KEY && masterUnlocked) drawFighters(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && masterUnlocked) lockMaster(); });
 
-  // قفل خودکار در صورت تغییر تب یا بستن صفحه برای امنیت
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden && masterUnlocked) lockMaster();
+  if (form) form.addEventListener('submit', event => {
+    event.preventDefault(); if (!form.reportValidity()) return;
+    try {
+      const data = new FormData(form);
+      const fighter = {id: (window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random()), name: String(data.get('name') || '').trim(), phone: String(data.get('phone') || '').trim(), age: String(data.get('age') || '').trim(), level: String(data.get('level') || ''), note: String(data.get('note') || '').trim(), createdAt: new Date().toISOString()};
+      if (!fighter.name || !fighter.phone) { formStatus.textContent = 'نام و شماره تماس را وارد کنید.'; return; }
+      const people = readFighters(); people.push(fighter); writeFighters(people); form.reset();
+      formStatus.textContent = 'اطلاعات ثبت شد و روی همین دستگاه ذخیره شد.'; if (masterUnlocked) drawFighters();
+    } catch (error) { formStatus.textContent = 'ذخیره‌سازی در مرورگر انجام نشد؛ فضای ذخیره‌سازی را بررسی کنید.'; }
   });
 
-  // بخش بارگذاری اخبار ورزشی
-  const refreshNews = document.getElementById('refresh-news');
-  const newsList = document.getElementById('news-list');
-  const newsStatus = document.getElementById('news-status');
-
-  async function loadNews() {
-    if (!newsList) return;
-    try {
-      if (newsStatus) newsStatus.textContent = 'در حال بارگذاری اخبار...';
-      const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://news.google.com/rss/search?q=ورزش+ایران&hl=fa&gl=IR&ceid=IR:fa'));
-      const data = await res.json();
-      if (data.status === 'ok' && data.items) {
-        newsList.innerHTML = '';
-        data.items.slice(0, 4).forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'news-card';
-          card.innerHTML = `<h4><a href="${item.link}" target="_blank" rel="noopener">${item.title}</a></h4><p>${item.pubDate || ''}</p>`;
-          newsList.appendChild(card);
-        });
-        if (newsStatus) newsStatus.textContent = '';
-      }
-    } catch (e) {
-      if (newsStatus) newsStatus.textContent = 'خطا در دریافت اخبار آنلاین.';
-    }
+  document.querySelectorAll('.platform-link[data-messenger]').forEach(link => link.addEventListener('click', () => {
+    const status = byId(link.closest('#contact') ? 'contact-messenger-status' : 'messenger-status');
+    if (status) status.textContent = 'در حال بازکردن صفحهٔ مستقیم استاد در ' + link.dataset.messenger + '؛ در صورت فعال‌بودن حساب می‌توانید پیام بفرستید.';
+  }));
+  const feeds = [
+    {label: 'ورزش ایران', url: 'https://news.google.com/rss/search?q=' + encodeURIComponent('ورزش ایران') + '&hl=fa&gl=IR&ceid=IR:fa'},
+    {label: 'ورزش جهان', url: 'https://news.google.com/rss/search?q=' + encodeURIComponent('international sports') + '&hl=en-US&gl=US&ceid=US:en'}
+  ];
+  function fallbackNews() {
+    if (!newsList) return; newsList.replaceChildren();
+    feeds.forEach(feed => { const article = document.createElement('article'); article.className = 'news-item';
+      const heading = document.createElement('h3'), anchor = document.createElement('a');
+      anchor.href = 'https://news.google.com/search?q=' + encodeURIComponent(feed.label === 'ورزش ایران' ? 'ورزش ایران' : 'international sports');
+      anchor.target = '_blank'; anchor.rel = 'noopener'; anchor.textContent = 'مشاهدهٔ تازه‌ترین تیترهای ' + feed.label; heading.append(anchor);
+      const paragraph = document.createElement('p'); paragraph.textContent = 'برای دیدن فهرست زندهٔ خبرها، جست‌وجوی خبری را باز کنید.';
+      article.append(heading, paragraph); newsList.append(article);
+    });
   }
-
-  if (refreshNews) refreshNews.addEventListener('click', loadNews);
-  loadNews();
-
+  async function loadNews() {
+    if (!refresh || !newsList || !newsStatus) return;
+    refresh.disabled = true; newsStatus.textContent = 'در حال دریافت تیترهای تازه…';
+    try {
+      const results = await Promise.all(feeds.map(async feed => {
+        const endpoint = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(feed.url);
+        const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 9000);
+        try { const response = await fetch(endpoint, {signal: controller.signal}); if (!response.ok) throw new Error('HTTP');
+          const data = await response.json(); if (data.status !== 'ok' || !Array.isArray(data.items)) throw new Error('RSS');
+          return {label: feed.label, items: data.items.slice(0, 4)};
+        } finally { clearTimeout(timer); }
+      }));
+      newsList.replaceChildren();
+      results.forEach(group => group.items.forEach(item => {
+        const article = document.createElement('article'); article.className = 'news-item';
+        const heading = document.createElement('h3'), anchor = document.createElement('a');
+        anchor.href = item.link || '#'; anchor.target = '_blank'; anchor.rel = 'noopener'; anchor.textContent = item.title || 'خبر ورزشی'; heading.append(anchor);
+        const paragraph = document.createElement('p'); paragraph.textContent = group.label + (item.author ? ' · ' + item.author : ''); article.append(heading, paragraph); newsList.append(article);
+      }));
+      if (!newsList.children.length) throw new Error('No news');
+      newsStatus.textContent = 'آخرین تیترهای دریافتی · ' + new Date().toLocaleString('fa-IR');
+    } catch (error) { fallbackNews(); newsStatus.textContent = 'خبرخوان زنده در دسترس نیست؛ پیوندهای جست‌وجوی خبری را باز کنید.'; }
+    finally { refresh.disabled = false; }
+  }
+  if (refresh) refresh.addEventListener('click', loadNews);
+  fallbackNews(); loadNews();
 })();
 </script>
+
+</body>
+</html>
