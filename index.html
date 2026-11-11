@@ -188,78 +188,281 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = "https://lspxhmqglcpdsanjifos.supabase.co";
-const SUPABASE_ANON_KEY = "secret-00734a38";
+const SUPABASE_ANON_KEY = "GAPGPTMASKTOKENhdc133118dlX0X";
 let _sb = null;
-try { if (window.supabase) _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
-catch (error) { console.error('Supabase initialization failed:', error); }
+
+try {
+  if (window.supabase) {
+    _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+} catch (error) {
+  console.error('Supabase initialization failed:', error);
+}
+
 const MASTER_PHONE = "09112402990";
+
 (()=>{
-  document.querySelectorAll('.platform-link[data-messenger]').forEach(link=>link.addEventListener('click',()=>{const status=document.getElementById(link.closest('#contact')?'contact-messenger-status':'messenger-status');if(status)status.textContent='در حال بازکردن صفحهٔ مستقیم استاد در '+link.dataset.messenger+'؛ در صورت فعال‌بودن حساب می‌توانید پیام بفرستید.';}));
-  const STORAGE_KEY='vajargahKungFuFighters_v1';
-  const faNum=n=>new Intl.NumberFormat('fa-IR').format(n);
-  const readFighters=()=>{try{const x=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');return Array.isArray(x)?x:[]}catch(error){console.warn('Could not read saved fighter data:',error);return []}};
-  const writeFighters=x=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(x))}catch(error){console.error('Could not save fighter data:',error);throw error}};
-  const form=document.getElementById('fighter-form'), formStatus=document.getElementById('form-status');
-  const listBox=document.getElementById('fighter-list'), count=document.getElementById('fighter-count');
-  const masterWrap=document.getElementById('master-list-wrap'), masterLogin=document.getElementById('master-login'), masterLock=document.getElementById('master-lock'), masterStatus=document.getElementById('master-status');
-  let masterUnlocked=false;
-  const MASTER_KEY='vajargahMasterPasswordHash_v1';
-  const digest=async text=>{if(!window.crypto||!crypto.subtle)throw new Error('secure-context-required');const bytes=new TextEncoder().encode(text);const hash=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('')};
-  function drawFighters(){if(!masterUnlocked)return;const people=readFighters();count.textContent=faNum(people.length)+' ثبت‌نام';listBox.replaceChildren();if(!people.length){const e=document.createElement('div');e.className='empty-state';e.textContent='هنوز ثبت‌نامی ثبت نشده است.';listBox.append(e);return}
-    const wrap=document.createElement('div');wrap.className='table-wrap';const table=document.createElement('table');table.className='fighter-table';table.setAttribute('aria-label','فهرست ثبت‌نام هنرجویان');const thead=document.createElement('thead'),hr=document.createElement('tr');['نام و نام خانوادگی','شماره تماس','سن','سابقهٔ تمرین','تاریخ ثبت‌نام','مدیریت'].forEach(t=>{const th=document.createElement('th');th.scope='col';th.textContent=t;hr.append(th)});thead.append(hr);table.append(thead);const tbody=document.createElement('tbody');
-    people.map((person,index)=>({person,index})).sort((a,b)=>String(b.person.createdAt||'').localeCompare(String(a.person.createdAt||''))).forEach(({person,index})=>{const tr=document.createElement('tr');const registered=person.createdAt?new Date(person.createdAt):null;const dateLabel=registered&&!Number.isNaN(registered.getTime())?registered.toLocaleDateString('fa-IR'):'—';[person.name,person.phone,person.age||'—',person.level||'—',dateLabel].forEach((v,i)=>{const td=document.createElement('td');td.dataset.label=['نام و نام خانوادگی','شماره تماس','سن','سابقهٔ تمرین','تاریخ ثبت‌نام'][i];td.textContent=String(v);tr.append(td)});const actionTd=document.createElement('td');actionTd.dataset.label='مدیریت';const actions=document.createElement('div');actions.className='row-actions';const detail=document.createElement('button');detail.type='button';detail.className='small-btn';detail.textContent='نمایش';detail.setAttribute('aria-label','نمایش اطلاعات '+person.name);detail.addEventListener('click',()=>{const lines=['نام: '+person.name,'شماره تماس: '+person.phone,'سن: '+(person.age||'—'),'سابقه: '+(person.level||'—'),'تاریخ ثبت‌نام: '+dateLabel,'توضیحات: '+(person.note||'—')];window.alert(lines.join('\n'))});const del=document.createElement('button');del.type='button';del.className='danger-btn';del.textContent='حذف';del.setAttribute('aria-label','حذف '+person.name);del.addEventListener('click',()=>{if(!window.confirm('ثبت‌نام '+person.name+' حذف شود؟'))return;const current=readFighters();current.splice(index,1);writeFighters(current);drawFighters()});actions.append(detail,del);actionTd.append(actions);tr.append(actionTd);tbody.append(tr)});table.append(tbody);wrap.append(table);listBox.append(wrap)
-  }
-  const masterChangePassword=document.getElementById('master-change-password');
-  async function getRemoteAdmin(){if(!_sb)return {data:null,error:new Error('Supabase unavailable')};return await _sb.from('admin_settings').select('password').eq('phone',MASTER_PHONE).single()}
-  async function verifyPassword(pass){
-    if(_sb){try{const {data,error}=await getRemoteAdmin();if(!error&&data)return {ok:pass===String(data.password),remote:true};}catch{}}
-    const saved=localStorage.getItem(MASTER_KEY);
-    return {ok:!!saved && await digest(pass)===saved,remote:false};
-  }
-  function lockMaster(){masterUnlocked=false;masterWrap.hidden=true;listBox.replaceChildren();count.textContent='';masterLogin.textContent='ورود / نمایش فهرست';masterStatus.textContent='فهرست قفل شد.'}
-  masterLogin.addEventListener('click',async()=>{
-    try{
-      const phone=window.prompt('شمارهٔ تلفن استاد را وارد کنید:');if(phone===null)return;
-      if(phone.trim()!==MASTER_PHONE){masterStatus.textContent='شمارهٔ تلفن استاد نادرست است.';return}
-      let remote=false,remoteData=null;
-      if(_sb){try{const result=await getRemoteAdmin();if(!result.error&&result.data){remote=true;remoteData=result.data}}catch{}}
-      let pass;
-      if(remote){pass=window.prompt('رمز ورود استاد:');if(pass===null)return;if(pass!==String(remoteData.password)){masterStatus.textContent='رمز نادرست است.';return}}
-      else {
-        let saved=localStorage.getItem(MASTER_KEY);
-        if(!saved){const first=window.prompt('Supabase در دسترس نیست؛ برای ورود محلی، رمز استاد را تعیین کنید (حداقل ۸ نویسه):');if(first===null)return;if(first.length<8){masterStatus.textContent='رمز باید دست‌کم ۸ نویسه باشد.';return}const confirmPass=window.prompt('رمز استاد را دوباره وارد کنید:');if(confirmPass!==first){masterStatus.textContent='رمزها یکسان نیستند؛ دوباره تلاش کنید.';return}saved=await digest(first);localStorage.setItem(MASTER_KEY,saved);pass=first}
-        else {pass=window.prompt('رمز ورود استاد:');if(pass===null)return;if(await digest(pass)!==saved){masterStatus.textContent='رمز نادرست است.';return}}
+  // پشتیبانی از لینک‌های پیام‌رسان
+  document.querySelectorAll('.platform-link[data-messenger]').forEach(link => {
+    link.addEventListener('click', () => {
+      console.log('باز کردن پیام‌رسان: ' + link.dataset.messenger);
+    });
+  });
+
+  const faNum = n => new Intl.NumberFormat('fa-IR').format(n);
+  const form = document.getElementById('fighter-form');
+  const formStatus = document.getElementById('form-status');
+  const masterLoginBtn = document.getElementById('master-login');
+  const masterChangePwBtn = document.getElementById('master-change-password');
+  const masterLockBtn = document.getElementById('master-lock');
+  const masterListWrap = document.getElementById('master-list-wrap');
+  const masterStatus = document.getElementById('master-status');
+  const countSpan = document.getElementById('fighter-count');
+  const listContainer = document.getElementById('fighter-list');
+
+  let masterUnlocked = false;
+
+  // ۱. دریافت هنرجویان از پایگاه داده Supabase
+  async function readFighters() {
+    if (!_sb) return [];
+    try {
+      const { data, error } = await _sb
+        .from('fighters')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('خطا در دریافت اطلاعات از Supabase:', error);
+        return [];
       }
-      masterUnlocked=true;masterWrap.hidden=false;masterLogin.textContent='فهرست استاد باز است';masterStatus.textContent=remote?'ورود موفق؛ رمز استاد از Supabase بررسی شد.':'ورود موفق؛ ورود با رمز محلی این دستگاه انجام شد.';drawFighters()
-    }catch{masterStatus.textContent='بررسی رمز ممکن نشد؛ اتصال اینترنت یا تنظیمات مرورگر را بررسی کنید.'}
+      return data || [];
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
+
+  // ۲. نمایش جدول هنرجویان
+  async function drawFighters() {
+    if (!masterUnlocked || !listContainer) return;
+    listContainer.innerHTML = '<p class="status-msg">در حال دریافت فهرست از پایگاه داده...</p>';
+
+    const people = await readFighters();
+    if (countSpan) countSpan.textContent = faNum(people.length) + ' ثبت‌نام';
+
+    if (people.length === 0) {
+      listContainer.innerHTML = '<p class="status-msg">هنوز هیچ ثبت‌نامی در پایگاه داده ثبت نشده است.</p>';
+      return;
+    }
+
+    const table = document.createElement('table');
+    table.id = 'fighter-table';
+    table.className = 'fighter-table';
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>نام و نام خانوادگی</th>
+          <th>شماره تماس</th>
+          <th>سن</th>
+          <th>سابقهٔ تمرین</th>
+          <th>تاریخ ثبت‌نام</th>
+          <th>مدیریت</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector('tbody');
+
+    people.forEach(person => {
+      const tr = document.createElement('tr');
+      const regDate = person.created_at ? new Date(person.created_at).toLocaleDateString('fa-IR') : '-';
+
+      tr.innerHTML = `
+        <td>${person.name || ''}</td>
+        <td><a href="tel:${person.phone}">${person.phone || ''}</a></td>
+        <td>${person.age ? faNum(person.age) : '-'}</td>
+        <td>${person.level || '-'}</td>
+        <td>${regDate}</td>
+        <td>
+          <button class="btn btn-secondary btn-sm show-btn">نمایش</button>
+          <button class="btn btn-danger btn-sm del-btn">حذف</button>
+        </td>
+      `;
+
+      // رویداد دکمه نمایش جزئیات
+      tr.querySelector('.show-btn').addEventListener('click', () => {
+        window.alert(
+          `اطلاعات هنرجو:\n` +
+          `نام: ${person.name}\n` +
+          `شماره تماس: ${person.phone}\n` +
+          `سن: ${person.age || '-'}\n` +
+          `سابقه: ${person.level || '-'}\n` +
+          `تاریخ: ${regDate}\n` +
+          `توضیحات: ${person.note || 'ندارد'}`
+        );
+      });
+
+      // رویداد دکمه حذف از دیتابیس Supabase
+      tr.querySelector('.del-btn').addEventListener('click', async () => {
+        if (!confirm(`آیا از حذف هنرجو «${person.name}» مطمئن هستید؟`)) return;
+        
+        const { error } = await _sb.from('fighters').delete().eq('id', person.id);
+        if (error) {
+          alert('خطا در حذف هنرجو از پایگاه داده: ' + error.message);
+        } else {
+          alert('هنرجو با موفقیت حذف شد.');
+          drawFighters();
+        }
+      });
+
+      tbody.appendChild(tr);
+    });
+
+    listContainer.innerHTML = '';
+    listContainer.appendChild(table);
+  }
+
+  // ۳. ثبت‌نام هنرجو و ارسال مستقیم به Supabase
+  if (form) {
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!_sb) {
+        formStatus.textContent = 'خطا در اتصال به پایگاه داده ابری.';
+        return;
+      }
+
+      formStatus.textContent = 'در حال ذخیره‌سازی در پایگاه داده...';
+
+      const formData = new FormData(form);
+      const fighter = {
+        id: (crypto.randomUUID ? crypto.randomUUID() : 'f_' + Date.now()),
+        name: formData.get('name')?.toString().trim(),
+        phone: formData.get('phone')?.toString().trim(),
+        age: parseInt(formData.get('age'), 10) || null,
+        level: formData.get('level')?.toString(),
+        note: formData.get('note')?.toString().trim(),
+        created_at: new Date().toISOString()
+      };
+
+      const { error } = await _sb.from('fighters').insert([fighter]);
+
+      if (error) {
+        console.error('Insert error:', error);
+        formStatus.textContent = 'خطا در ثبت اطلاعات در سرور: ' + error.message;
+      } else {
+        form.reset();
+        formStatus.textContent = 'اطلاعات با موفقیت در پایگاه داده سرور ثبت شد و در تمام دستگاه‌ها در دسترس است.';
+        if (masterUnlocked) await drawFighters();
+      }
+    });
+  }
+
+  // ۴. مدیریت ورود و رمز استاد با Supabase
+  async function getRemoteAdmin() {
+    if (!_sb) return { data: null, error: new Error('Supabase unavailable') };
+    return await _sb.from('admin_settings').select('password').eq('phone', MASTER_PHONE).single();
+  }
+
+  function lockMaster() {
+    masterUnlocked = false;
+    if (masterListWrap) masterListWrap.style.display = 'none';
+    if (masterLockBtn) masterLockBtn.style.display = 'none';
+    if (masterChangePwBtn) masterChangePwBtn.style.display = 'none';
+    if (masterLoginBtn) masterLoginBtn.style.display = 'inline-block';
+    if (masterStatus) masterStatus.textContent = 'فهرست قفل شد.';
+  }
+
+  if (masterLoginBtn) {
+    masterLoginBtn.addEventListener('click', async () => {
+      const enteredPhone = prompt('شماره همراه استاد را وارد کنید:');
+      if (!enteredPhone || enteredPhone.trim() !== MASTER_PHONE) {
+        alert('شماره همراه وارد شده نامعتبر است.');
+        return;
+      }
+
+      const pass = prompt('رمز عبور مدیریت را وارد کنید:');
+      if (!pass) return;
+
+      const { data: remoteData, error } = await getRemoteAdmin();
+      if (!error && remoteData && remoteData.password === pass) {
+        masterUnlocked = true;
+        if (masterListWrap) masterListWrap.style.display = 'block';
+        if (masterLockBtn) masterLockBtn.style.display = 'inline-block';
+        if (masterChangePwBtn) masterChangePwBtn.style.display = 'inline-block';
+        masterLoginBtn.style.display = 'none';
+        masterStatus.textContent = 'ورود موفق؛ اطلاعات مستقیماً از Supabase بارگذاری شد.';
+        drawFighters();
+      } else {
+        alert('رمز عبور وارد شده نادرست است.');
+      }
+    });
+  }
+
+  if (masterLockBtn) {
+    masterLockBtn.addEventListener('click', lockMaster);
+  }
+
+  // تغییر رمز عبور استاد در دیتابیس
+  if (masterChangePwBtn) {
+    masterChangePwBtn.addEventListener('click', async () => {
+      const current = prompt('رمز عبور فعلی را وارد کنید:');
+      if (!current) return;
+
+      const { data: remoteData } = await getRemoteAdmin();
+      if (!remoteData || remoteData.password !== current) {
+        alert('رمز عبور فعلی نادرست است.');
+        return;
+      }
+
+      const newPass = prompt('رمز جدید (حداقل ۸ نویسه):');
+      if (!newPass || newPass.length < 8) {
+        alert('رمز عبور باید حداقل ۸ کاراکتر باشد.');
+        return;
+      }
+
+      const { error } = await _sb.from('admin_settings').update({ password: newPass }).eq('phone', MASTER_PHONE);
+      if (error) {
+        alert('خطا در به‌روزرسانی رمز در سرور: ' + error.message);
+      } else {
+        alert('رمز عبور با موفقیت در Supabase تغییر کرد و روی تمام دستگاه‌ها هماهنگ شد.');
+      }
+    });
+  }
+
+  // قفل خودکار در صورت تغییر تب یا بستن صفحه برای امنیت
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && masterUnlocked) lockMaster();
   });
-  masterChangePassword.addEventListener('click',async()=>{
-    if(!masterUnlocked)return;
-    try{
-      const current=window.prompt('رمز عبور فعلی:');if(current===null)return;
-      let remote=false,remoteData=null;
-      if(_sb){try{const result=await getRemoteAdmin();if(!result.error&&result.data){remote=true;remoteData=result.data}}catch{}}
-      const valid=remote?current===String(remoteData.password):(localStorage.getItem(MASTER_KEY)&&await digest(current)===localStorage.getItem(MASTER_KEY));
-      if(!valid){masterStatus.textContent='رمز فعلی نادرست است یا امکان تأیید آن فراهم نشد.';return}
-      const newPass=window.prompt('رمز عبور جدید (حداقل ۸ نویسه):');if(newPass===null)return;
-      if(newPass.length<8){masterStatus.textContent='رمز جدید باید دست‌کم ۸ نویسه باشد.';return}
-      const repeat=window.prompt('تکرار رمز جدید:');if(repeat===null)return;
-      if(newPass!==repeat){masterStatus.textContent='رمزهای جدید یکسان نیستند.';return}
-      if(remote){const {error}=await _sb.from('admin_settings').update({password:newPass}).eq('phone',MASTER_PHONE);if(error){masterStatus.textContent='به‌روزرسانی Supabase ناموفق بود؛ رمز تغییر نکرد. تنظیمات دسترسی جدول را بررسی کنید.';return}localStorage.setItem(MASTER_KEY,await digest(newPass));window.alert('رمز عبور با موفقیت تغییر کرد و روی تمام دستگاه‌ها (موبایل و کامپیوتر) هماهنگ شد.');masterStatus.textContent='رمز عبور در Supabase به‌روزرسانی شد.'}
-      else {localStorage.setItem(MASTER_KEY,await digest(newPass));window.alert('رمز عبور محلی این دستگاه با موفقیت تغییر کرد. برای هماهنگی میان دستگاه‌ها، اتصال و تنظیمات Supabase لازم است.');masterStatus.textContent='رمز محلی این دستگاه تغییر کرد؛ در دستگاه‌های دیگر همگام نشده است.'}
-    }catch{masterStatus.textContent='تغییر رمز انجام نشد؛ اتصال یا پشتیبانی رمزنگاری مرورگر را بررسی کنید.'}
-  });
-  masterLock.addEventListener('click',lockMaster);
-  window.addEventListener('storage',event=>{try{if(event.key===STORAGE_KEY&&masterUnlocked)drawFighters()}catch(error){console.error('Cross-tab fighter sync failed:',error);if(masterStatus)masterStatus.textContent='همگام‌سازی فهرست انجام نشد؛ فضای ذخیره‌سازی مرورگر را بررسی کنید.'}});
-  document.addEventListener('visibilitychange',()=>{if(document.hidden&&masterUnlocked)lockMaster()});
-  form.addEventListener('submit',event=>{event.preventDefault();if(!form.reportValidity())return;try{const d=new FormData(form),fighter={id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random()),name:String(d.get('name')).trim(),phone:String(d.get('phone')).trim(),age:String(d.get('age')||'').trim(),level:String(d.get('level')||''),note:String(d.get('note')||'').trim(),createdAt:new Date().toISOString()};if(!fighter.name||!fighter.phone){formStatus.textContent='نام و شماره تماس را وارد کنید.';return}const people=readFighters();people.push(fighter);writeFighters(people);form.reset();formStatus.textContent='اطلاعات ثبت شد و روی همین دستگاه ذخیره شد.';if(masterUnlocked)drawFighters()}catch{formStatus.textContent='ذخیره‌سازی در مرورگر انجام نشد؛ تنظیمات یا فضای ذخیره‌سازی را بررسی کنید.'}});
-  const newsList=document.getElementById('news-list'),newsStatus=document.getElementById('news-status'),refresh=document.getElementById('refresh-news');
-  const feeds=[{label:'ورزش ایران',url:'https://news.google.com/rss/search?q='+encodeURIComponent('ورزش ایران')+'&hl=fa&gl=IR&ceid=IR:fa'},{label:'ورزش جهان',url:'https://news.google.com/rss/search?q='+encodeURIComponent('international sports')+'&hl=en-US&gl=US&ceid=US:en'}];
-  function fallbackNews(){newsList.replaceChildren();feeds.forEach(feed=>{const article=document.createElement('article');article.className='news-item';const h=document.createElement('h3');const a=document.createElement('a');a.href='https://news.google.com/search?q='+encodeURIComponent(feed.label==='ورزش ایران'?'ورزش ایران':'international sports');a.target='_blank';a.rel='noopener';a.textContent='مشاهدهٔ تازه‌ترین تیترهای '+feed.label;h.append(a);const p=document.createElement('p');p.textContent='برای دیدن فهرست زندهٔ خبرها، جست‌وجوی خبری را باز کنید.';article.append(h,p);newsList.append(article)})}
-  async function loadNews(){refresh.disabled=true;newsStatus.textContent='در حال دریافت تیترهای تازه…';try{const results=await Promise.all(feeds.map(async feed=>{const endpoint='https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(feed.url);const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),9000);try{const response=await fetch(endpoint,{signal:controller.signal});if(!response.ok)throw Error('HTTP');const data=await response.json();if(data.status!=='ok'||!Array.isArray(data.items))throw Error('RSS');return {label:feed.label,items:data.items.slice(0,4)}}finally{clearTimeout(timer)}}));newsList.replaceChildren();results.forEach(group=>group.items.forEach(item=>{const article=document.createElement('article');article.className='news-item';const h=document.createElement('h3'),a=document.createElement('a');a.href=item.link||'#';a.target='_blank';a.rel='noopener';a.textContent=item.title||'خبر ورزشی';h.append(a);const p=document.createElement('p');const source=document.createElement('span');source.textContent=group.label+(item.author?' · '+item.author:'');p.append(source);article.append(h,p);newsList.append(article)}));if(!newsList.children.length)throw Error('empty');newsStatus.textContent='آخرین تیترهای دریافتی · '+new Date().toLocaleString('fa-IR')}catch{fallbackNews();newsStatus.textContent='خبرخوان زنده در دسترس نیست؛ پیوندهای جست‌وجوی خبری را باز کنید.'}finally{refresh.disabled=false}}
-  refresh.addEventListener('click',loadNews);fallbackNews();loadNews();
+
+  // بخش بارگذاری اخبار ورزشی
+  const refreshNews = document.getElementById('refresh-news');
+  const newsList = document.getElementById('news-list');
+  const newsStatus = document.getElementById('news-status');
+
+  async function loadNews() {
+    if (!newsList) return;
+    try {
+      if (newsStatus) newsStatus.textContent = 'در حال بارگذاری اخبار...';
+      const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://news.google.com/rss/search?q=ورزش+ایران&hl=fa&gl=IR&ceid=IR:fa'));
+      const data = await res.json();
+      if (data.status === 'ok' && data.items) {
+        newsList.innerHTML = '';
+        data.items.slice(0, 4).forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'news-card';
+          card.innerHTML = `<h4><a href="${item.link}" target="_blank" rel="noopener">${item.title}</a></h4><p>${item.pubDate || ''}</p>`;
+          newsList.appendChild(card);
+        });
+        if (newsStatus) newsStatus.textContent = '';
+      }
+    } catch (e) {
+      if (newsStatus) newsStatus.textContent = 'خطا در دریافت اخبار آنلاین.';
+    }
+  }
+
+  if (refreshNews) refreshNews.addEventListener('click', loadNews);
+  loadNews();
+
 })();
 </script>
-
-</body>
-</html>
